@@ -1,0 +1,1285 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NovoTaxi — Таксі у Новограді-Волинському</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Manrope:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0a0a0a;
+    --yellow: #FFD600;
+    --yellow-dark: #e6c000;
+    --white: #f5f5f0;
+    --gray: #1a1a1a;
+    --gray2: #2a2a2a;
+    --text-muted: #888;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'Manrope', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ─── HEADER ─── */
+  header {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 40px;
+    background: rgba(10,10,10,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255,214,0,0.12);
+  }
+
+  .logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    letter-spacing: 3px;
+    color: var(--yellow);
+  }
+  .logo span { color: var(--white); }
+
+  nav a {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-left: 32px;
+    transition: color 0.2s;
+  }
+  nav a:hover { color: var(--yellow); }
+
+  .header-stats {
+    display: flex;
+    gap: 28px;
+    align-items: center;
+  }
+  .header-stat {
+    text-align: center;
+    line-height: 1;
+  }
+  .header-stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.3rem;
+    color: var(--yellow);
+    letter-spacing: 1px;
+  }
+  .header-stat-label {
+    font-size: 0.6rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 2px;
+  }
+  @media (max-width: 1100px) {
+    nav { display: none; }
+  }
+  @media (max-width: 480px) {
+    .header-stats { display: none; }
+  }
+
+  .btn-header {
+    background: var(--yellow);
+    color: var(--black);
+    border: none;
+    padding: 7px 14px;
+    font-family: 'Manrope', sans-serif;
+    font-weight: 700;
+    font-size: 0.72rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.2s, transform 0.15s;
+    margin-left: 16px;
+  }
+  .btn-header:hover { background: var(--yellow-dark); transform: translateY(-1px); }
+
+  .btn-header-outline {
+    background: transparent;
+    color: var(--white);
+    border: 1px solid rgba(255,255,255,0.3);
+    padding: 7px 14px;
+    font-family: 'Manrope', sans-serif;
+    font-weight: 700;
+    font-size: 0.72rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    text-decoration: none;
+    transition: border-color 0.2s, color 0.2s;
+    margin-left: 16px;
+    white-space: nowrap;
+  }
+  .btn-header-outline:hover { border-color: var(--yellow); color: var(--yellow); }
+
+  /* ─── HERO ─── */
+  .hero {
+    display: flex;
+    align-items: flex-start;
+    padding: 16px 40px 0;
+    position: relative;
+    overflow: hidden;
+    height: fit-content;
+    padding-bottom: 0 !important;
+    margin-bottom: 0 !important;
+  }
+  .hero-inner {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    width: 100%;
+  }
+  .hero-left { flex: 1; }
+  .hero-right {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    flex-shrink: 0;
+    align-self: flex-start;
+  }
+
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background: 
+      radial-gradient(ellipse 60% 50% at 70% 50%, rgba(255,214,0,0.07) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 60% at 20% 80%, rgba(255,214,0,0.04) 0%, transparent 50%);
+  }
+
+  /* Animated road lines */
+  .road-lines {
+    position: absolute;
+    right: 0; top: 0; bottom: 0;
+    width: 55%;
+    overflow: hidden;
+    opacity: 0.08;
+  }
+  .road-line {
+    position: absolute;
+    width: 3px;
+    height: 100%;
+    background: linear-gradient(to bottom, transparent, var(--yellow) 30%, var(--yellow) 70%, transparent);
+    animation: roadScroll 3s linear infinite;
+  }
+  .road-line:nth-child(1) { left: 15%; animation-delay: 0s; }
+  .road-line:nth-child(2) { left: 35%; animation-delay: -1s; }
+  .road-line:nth-child(3) { left: 55%; animation-delay: -2s; }
+  .road-line:nth-child(4) { left: 75%; animation-delay: -0.5s; }
+  .road-line:nth-child(5) { left: 90%; animation-delay: -1.5s; }
+
+  @keyframes roadScroll {
+    0% { transform: translateY(-100%); }
+    100% { transform: translateY(100%); }
+  }
+
+  .hero-content {
+    position: relative;
+    width: 100%;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero-tag {
+    display: inline-block;
+    background: rgba(255,214,0,0.1);
+    border: 1px solid rgba(255,214,0,0.3);
+    color: var(--yellow);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    margin-bottom: 28px;
+  }
+
+  .hero h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(4rem, 9vw, 8rem);
+    line-height: 0.9;
+    letter-spacing: 2px;
+    margin-top: 0;
+    margin-bottom: 12px;
+  }
+
+  .hero h1 .accent { color: var(--yellow); }
+
+  .hero p {
+    font-size: 1.15rem;
+    color: #bbb;
+    font-weight: 300;
+    max-width: 480px;
+    margin-bottom: 8px;
+    line-height: 1.7;
+  }
+
+  .hero-btns {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .btn-primary {
+    background: var(--yellow);
+    color: var(--black);
+    padding: 16px 36px;
+    font-family: 'Manrope', sans-serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.2s, transform 0.15s;
+    display: inline-block;
+  }
+  .btn-primary:hover { background: var(--yellow-dark); transform: translateY(-2px); }
+
+  .btn-outline {
+    background: transparent;
+    color: var(--white);
+    padding: 16px 36px;
+    font-family: 'Manrope', sans-serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    border: 1px solid rgba(255,255,255,0.25);
+    cursor: pointer;
+    text-decoration: none;
+    transition: border-color 0.2s, color 0.2s, transform 0.15s;
+    display: inline-block;
+  }
+  .btn-outline:hover { border-color: var(--yellow); color: var(--yellow); transform: translateY(-2px); }
+
+  .hero-stats {
+    display: flex;
+    gap: 48px;
+    margin-top: 64px;
+    padding-top: 40px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    animation: fadeUp 0.8s 0.3s ease both;
+  }
+  .stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.8rem;
+    color: var(--yellow);
+    line-height: 1;
+    letter-spacing: 1px;
+  }
+  .stat-label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 4px;
+  }
+
+  /* ─── HOW IT WORKS ─── */
+  .section {
+    padding: 4px 40px 60px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .section-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--yellow);
+    margin-bottom: 16px;
+  }
+
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+    line-height: 0.95;
+    letter-spacing: 1px;
+    margin-bottom: 60px;
+  }
+
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 2px;
+  }
+
+  .step {
+    background: var(--gray);
+    padding: 40px 32px;
+    position: relative;
+    transition: background 0.2s;
+  }
+  .step:hover { background: var(--gray2); }
+
+  .step-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 4rem;
+    color: rgba(255,214,0,0.15);
+    line-height: 1;
+    margin-bottom: 20px;
+    transition: color 0.2s;
+  }
+  .step:hover .step-num { color: rgba(255,214,0,0.35); }
+
+  .step h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+  .step p {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  /* ─── FOR DRIVERS ─── */
+  .drivers-section {
+    background: var(--gray);
+    padding: 100px 40px;
+    position: relative;
+    overflow: hidden;
+  }
+  .drivers-section::before {
+    content: 'ВОДІЙ';
+    position: absolute;
+    right: -20px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18rem;
+    color: rgba(255,214,0,0.03);
+    line-height: 1;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+
+  .drivers-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+
+  .driver-features {
+    list-style: none;
+    margin-top: 40px;
+  }
+  .driver-features li {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 20px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .driver-features li:last-child { border-bottom: none; }
+
+  .feat-icon {
+    width: 40px;
+    height: 40px;
+    background: rgba(255,214,0,0.1);
+    border: 1px solid rgba(255,214,0,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+  }
+
+  .feat-text h4 {
+    font-weight: 700;
+    font-size: 0.95rem;
+    margin-bottom: 4px;
+  }
+  .feat-text p {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+  }
+
+  .price-card {
+    background: var(--black);
+    border: 1px solid rgba(255,214,0,0.2);
+    padding: 48px 40px;
+    text-align: center;
+    position: relative;
+  }
+  .price-card::before {
+    content: '★ Фіксована ставка';
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--yellow);
+    color: var(--black);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 4px 14px;
+    white-space: nowrap;
+  }
+
+  .price-amount {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 6rem;
+    color: var(--yellow);
+    line-height: 1;
+    letter-spacing: 2px;
+  }
+  .price-currency {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.5rem;
+    color: var(--yellow);
+    vertical-align: top;
+    margin-top: 12px;
+    display: inline-block;
+  }
+  .price-period {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-top: 8px;
+    margin-bottom: 24px;
+  }
+  .price-vs {
+    background: rgba(255,255,255,0.04);
+    padding: 16px;
+    font-size: 0.85rem;
+    color: #aaa;
+    margin: 24px 0;
+  }
+  .price-vs strong { color: var(--yellow); }
+
+  .price-list {
+    list-style: none;
+    text-align: left;
+    margin: 24px 0 32px;
+  }
+  .price-list li {
+    padding: 8px 0;
+    font-size: 0.9rem;
+    color: #ccc;
+    display: flex;
+    gap: 10px;
+  }
+  .price-list li::before {
+    content: '✓';
+    color: var(--yellow);
+    font-weight: 700;
+  }
+
+  /* ─── FOR CLIENTS ─── */
+  .clients-section {
+    padding: 100px 40px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .clients-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 2px;
+    margin-top: 60px;
+  }
+
+  .client-card {
+    background: var(--gray);
+    padding: 36px 32px;
+    transition: background 0.2s;
+  }
+  .client-card:hover { background: var(--gray2); }
+
+  .client-emoji {
+    font-size: 2.2rem;
+    margin-bottom: 20px;
+    display: block;
+  }
+  .client-card h3 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+  .client-card p {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  /* ─── CITY ─── */
+  .city-section {
+    background: var(--yellow);
+    padding: 80px 40px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .city-section::before {
+    content: 'ЗВЯГЕЛЬ';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 16rem;
+    color: rgba(0,0,0,0.06);
+    white-space: nowrap;
+    pointer-events: none;
+  }
+
+  .city-section h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2rem, 6vw, 5rem);
+    color: var(--black);
+    line-height: 0.95;
+    margin-bottom: 20px;
+    position: relative;
+    letter-spacing: 2px;
+  }
+  .city-section p {
+    color: rgba(0,0,0,0.65);
+    font-size: 1.1rem;
+    max-width: 520px;
+    margin: 0 auto 40px;
+    position: relative;
+  }
+  .btn-dark {
+    background: var(--black);
+    color: var(--yellow);
+    padding: 16px 40px;
+    font-family: 'Manrope', sans-serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    transition: transform 0.15s;
+    display: inline-block;
+    position: relative;
+  }
+  .btn-dark:hover { transform: translateY(-2px); }
+
+  /* ─── CONTACT ─── */
+  .contact-section {
+    padding: 100px 40px;
+    max-width: 1100px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: start;
+  }
+
+  .contact-info h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.5rem, 4vw, 4rem);
+    line-height: 0.95;
+    margin-bottom: 24px;
+    letter-spacing: 1px;
+  }
+  .contact-info p {
+    color: var(--text-muted);
+    margin-bottom: 40px;
+    line-height: 1.7;
+  }
+
+  .contact-links {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .contact-links a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--white);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s;
+  }
+  .contact-links a:hover { color: var(--yellow); }
+  .contact-icon {
+    width: 44px;
+    height: 44px;
+    background: var(--gray);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .contact-form input,
+  .contact-form textarea,
+  .contact-form select {
+    background: var(--gray);
+    border: 1px solid rgba(255,255,255,0.08);
+    color: var(--white);
+    padding: 14px 18px;
+    font-family: 'Manrope', sans-serif;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.2s;
+    width: 100%;
+  }
+  .contact-form input:focus,
+  .contact-form textarea:focus,
+  .contact-form select:focus { border-color: var(--yellow); }
+  .contact-form input::placeholder,
+  .contact-form textarea::placeholder { color: var(--text-muted); }
+  .contact-form textarea { min-height: 120px; resize: vertical; }
+  .contact-form select option { background: var(--gray); }
+
+  /* ─── FOOTER ─── */
+  footer {
+    border-top: 1px solid rgba(255,255,255,0.06);
+    padding: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: gap;
+    gap: 20px;
+  }
+  .footer-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6rem;
+    letter-spacing: 3px;
+    color: var(--yellow);
+  }
+  .footer-logo span { color: rgba(255,255,255,0.4); }
+  footer p {
+    color: var(--text-muted);
+    font-size: 0.82rem;
+  }
+
+  /* ─── PHONE MOCKUP ─── */
+  .phone-wrap {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .phone {
+    width: 220px;
+    height: 420px;
+    background: var(--gray2);
+    border-radius: 36px;
+    border: 2px solid rgba(255,214,0,0.25);
+    padding: 20px;
+    position: relative;
+    box-shadow: 0 40px 80px rgba(0,0,0,0.6), 0 0 60px rgba(255,214,0,0.05);
+  }
+  .phone::before {
+    content: '';
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 6px;
+    background: rgba(255,255,255,0.12);
+    border-radius: 3px;
+  }
+  .phone-screen {
+    background: var(--black);
+    border-radius: 24px;
+    height: 100%;
+    padding: 16px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    overflow: hidden;
+  }
+  .phone-header {
+    text-align: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.3rem;
+    color: var(--yellow);
+    letter-spacing: 2px;
+  }
+  .phone-map {
+    background: linear-gradient(135deg, #111 0%, #1a1a10 100%);
+    border-radius: 12px;
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+  }
+  .map-dot {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: var(--yellow);
+    border-radius: 50%;
+    box-shadow: 0 0 12px var(--yellow);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  .map-dot:nth-child(1) { top: 40%; left: 35%; }
+  .map-dot:nth-child(2) { top: 60%; left: 65%; opacity: 0.5; animation-delay: -1s; }
+  .map-dot:nth-child(3) { top: 25%; left: 55%; opacity: 0.3; animation-delay: -0.5s; }
+
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.5); opacity: 0.6; }
+  }
+
+  .phone-btn {
+    background: var(--yellow);
+    color: var(--black);
+    text-align: center;
+    padding: 10px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .order-ping {
+    background: rgba(255,214,0,0.1);
+    border: 1px solid rgba(255,214,0,0.3);
+    border-radius: 8px;
+    padding: 8px 10px;
+    font-size: 0.7rem;
+    color: var(--yellow);
+    animation: ping 3s ease-in-out infinite;
+  }
+  @keyframes ping {
+    0%, 70%, 100% { opacity: 1; }
+    85% { opacity: 0.3; }
+  }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 768px) {
+    header { padding: 16px 20px; }
+    nav { display: none; }
+    .hero { padding: 100px 20px 60px; }
+    .hero-stats { gap: 28px; flex-wrap: wrap; }
+    .section { padding: 70px 20px; }
+    .drivers-inner { grid-template-columns: 1fr; gap: 40px; }
+    .contact-section { grid-template-columns: 1fr; gap: 40px; padding: 70px 20px; }
+    .clients-section { padding: 70px 20px; }
+    .drivers-section { padding: 70px 20px; }
+    footer { padding: 30px 20px; flex-direction: column; text-align: center; }
+    .road-lines { width: 100%; opacity: 0.04; }
+    .phone-wrap { display: none; }
+  }
+
+  /* MODALS */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(6px);
+  }
+  .modal-overlay.active { display: flex; }
+
+  .modal {
+    background: #111;
+    border: 1px solid rgba(255,214,0,0.2);
+    padding: 40px 36px;
+    width: 90%;
+    max-width: 440px;
+    position: relative;
+    animation: modalIn 0.25s ease;
+  }
+  @keyframes modalIn {
+    from { opacity:0; transform: translateY(20px); }
+    to { opacity:1; transform: translateY(0); }
+  }
+  .modal-close {
+    position: absolute;
+    top: 16px; right: 20px;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #666;
+    background: none;
+    border: none;
+    line-height: 1;
+    transition: color 0.2s;
+  }
+  .modal-close:hover { color: var(--yellow); }
+  .modal-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.2rem;
+    letter-spacing: 2px;
+    margin-bottom: 6px;
+  }
+  .modal-sub {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    margin-bottom: 24px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .modal input, .modal select, .modal textarea {
+    background: #1a1a1a;
+    border: 1px solid rgba(255,255,255,0.08);
+    color: var(--white);
+    padding: 12px 16px;
+    font-family: 'Manrope', sans-serif;
+    font-size: 0.9rem;
+    outline: none;
+    width: 100%;
+    margin-bottom: 12px;
+    transition: border-color 0.2s;
+  }
+  .modal input:focus, .modal select:focus, .modal textarea:focus { border-color: var(--yellow); }
+  .modal input::placeholder, .modal textarea::placeholder { color: #555; }
+  .modal select option { background: #1a1a1a; }
+  .modal-qr {
+    text-align: center;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+  .modal-qr p {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .modal-qr img {
+    width: 110px;
+    height: 110px;
+    border: 1px solid rgba(255,214,0,0.25);
+    padding: 6px;
+    background: #0a0a0a;
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">Novo<span>Taxi</span></div>
+  <nav>
+    <a href="#how">Як це працює</a>
+    <a href="#drivers">Водіям</a>
+    <a href="#clients">Клієнтам</a>
+    <a href="#contact">Контакти</a>
+  </nav>
+  <div class="header-stats">
+    <div class="header-stat">
+      <div class="header-stat-num">5хв</div>
+      <div class="header-stat-label">Подача</div>
+    </div>
+    <div class="header-stat">
+      <div class="header-stat-num">24/7</div>
+      <div class="header-stat-label">Працюємо</div>
+    </div>
+    <div class="header-stat">
+      <div class="header-stat-num">100%</div>
+      <div class="header-stat-label">Місцеві</div>
+    </div>
+  </div>
+  <a href="#" class="btn-header-outline" onclick="event.preventDefault();handleDriver()">Стати водієм</a>
+  <a href="#" class="btn-header" onclick="event.preventDefault();handleOrder()">Замовити</a>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  
+  <div class="road-lines">
+    
+    
+    
+    
+    
+  </div>
+  <div class="hero-content">
+    <div style="position:relative; width:100%;">
+      <div style="flex:1;">
+        <div style="display:flex; gap:12px; flex-wrap:nowrap; align-items:center; margin-bottom:24px;">
+          <div class="hero-tag" style="margin-bottom:0;">🚖 Звягель</div>
+          <div class="hero-tag" style="margin-bottom:0; background:rgba(57,255,20,0.12); border-color:#39ff14; color:#39ff14;">📞 Безкоштовний виклик для пасажирів</div>
+        </div>
+        <h1>ШВИДКЕ<br><span class="accent">ТАКСІ</span><br>У МІСТІ</h1>
+        <p>Місцевий таксі-агрегатор. Перевірені водії, чесні ціни, швидка подача — без зайвих відсотків і посередників.</p>
+      <div style="margin-top:8px; background:rgba(255,214,0,0.08); border:1px solid var(--yellow); padding:14px 18px; display:inline-block;">
+        <span style="font-size:1.56rem; margin-right:8px;">🎁</span>
+        <span id="promo-title" style="font-weight:700; color:var(--yellow); font-size:1.14rem; letter-spacing:0.5px;">Безкоштовний тариф для водіїв</span>
+        <br>
+        <span id="promo-sub" style="font-size:0.96rem; color:#aaa; margin-left:2rem;">до 31 серпня 2026 року</span>
+      </div>
+  </div></section>
+<!-- HOW IT WORKS -->
+<section id="how">
+  <div class="section">
+    <div class="section-label">Просто і зрозуміло</div>
+    <h2 class="section-title">ЯК ЦЕ<br>ПРАЦЮЄ</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <h3>Залишіть заявку</h3>
+        <p>Зателефонуйте або напишіть. Вкажіть звідки і куди — і все.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <h3>Водій прийняв</h3>
+        <p>Найближчий вільний водій отримує замовлення і одразу їде до вас.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <h3>Подача</h3>
+        <p>Водій знає місто. Жодних плутанин з адресою — він вже їде.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">04</div>
+        <h3>На місці</h3>
+        <p>Розрахунок готівкою або за домовленістю. Просто і без зайвого.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOR DRIVERS -->
+<section id="drivers" class="drivers-section">
+  <div class="drivers-inner">
+    <div>
+      <div class="section-label">Для водіїв</div>
+      <h2 class="section-title">ЗАРОБЛЯЙ<br>БІЛЬШЕ</h2>
+      <ul class="driver-features">
+        <li>
+          <div class="feat-icon">💰</div>
+          <div class="feat-text">
+            <h4>Фіксована підписка</h4>
+            <p>500–1000 грн/місяць — і всі поїздки повністю твої. Жодних відсотків.</p>
+          </div>
+        </li>
+        <li>
+          <div class="feat-icon">📍</div>
+          <div class="feat-text">
+            <h4>Розумна черга</h4>
+            <p>Замовлення йдуть найближчому водію. Чим ближче — тим швидше отримуєш.</p>
+          </div>
+        </li>
+        <li>
+          <div class="feat-icon">🔔</div>
+          <div class="feat-text">
+            <h4>Миттєве сповіщення</h4>
+            <p>Звук і вібрація при новому замовленні — не пропустиш нічого.</p>
+          </div>
+        </li>
+        <li>
+          <div class="feat-icon">🏙️</div>
+          <div class="feat-text">
+            <h4>Тільки своє місто</h4>
+            <p>Тільки Звягель. Знайомі вулиці, реальні клієнти.</p>
+          </div>
+        </li>
+      </ul>
+    </div>
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="phone-header">NovoTaxi</div>
+          <div class="order-ping">🔔 Нове замовлення — вул. Шевченка</div>
+          <div class="phone-map">
+            
+            
+            
+          </div>
+          <div class="phone-btn">Прийняти</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICE -->
+<section style="background: #111; padding: 100px 40px;">
+  <div style="max-width: 500px; margin: 0 auto;">
+    <div style="text-align:center; margin-bottom: 48px;">
+      <div class="section-label" style="display:inline-block">Прозоро і чесно</div>
+      <h2 class="section-title" style="text-align:center">ЦІНА<br>ПІДПИСКИ</h2>
+    </div>
+    <div class="price-card">
+      <div>
+        <span class="price-currency">₴</span><span class="price-amount" id="driver-price">500</span>
+      </div>
+      <div class="price-period">на місяць · без прихованих комісій</div>
+
+      <ul class="price-list">
+        <li>Необмежена кількість поїздок</li>
+        <li>Пріоритет у черзі замовлень</li>
+        <li>Підтримка і навчання</li>
+        <li>Без штрафів і відсотків</li>
+      </ul>
+      <a href="#contact" class="btn-primary" style="width:100%; text-align:center; display:block;">Підключитися</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOR CLIENTS -->
+<section id="clients">
+  <div class="clients-section">
+    <div class="section-label">Для клієнтів</div>
+    <h2 class="section-title">ЧОМУ<br>NOVOTAXI</h2>
+    <div class="clients-grid">
+      <div class="client-card">
+        <span class="client-emoji">🏘️</span>
+        <h3>Своє місто</h3>
+        <p>Водії знають кожну вулицю Новограда. Пояснювати маршрут не потрібно.</p>
+      </div>
+      <div class="client-card">
+        <span class="client-emoji">⚡</span>
+        <h3>Швидка подача</h3>
+        <p>Місто невелике — водій зазвичай поруч. Чекати довго не доведеться.</p>
+      </div>
+      <div class="client-card">
+        <span class="client-emoji">✅</span>
+        <h3>Перевірені водії</h3>
+        <p>Тільки місцеві, перевірені люди. Не анонімні профілі з іншого міста.</p>
+      </div>
+      <div class="client-card">
+        <span class="client-emoji">💬</span>
+        <h3>Просте замовлення</h3>
+        <p>Телефон або повідомлення — і все. Ніяких зайвих кроків і реєстрацій.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<!-- CONTACT -->
+<section id="contact">
+  <div style="max-width:600px; margin:0 auto; padding:60px 40px; text-align:center;">
+    <div class="section-label" style="display:inline-block; margin-bottom:16px;">Зв'язок</div>
+    <h2 class="section-title">НАПИСАТИ<br>НАМ</h2>
+    <p style="color:#aaa; margin-bottom:32px;">Зареєструйтесь в додатку і напишіть нам напряму.</p>
+    <div style="background:var(--gray); border:1px solid rgba(255,214,0,0.15); padding:32px; margin-bottom:24px;">
+      <div style="font-size:0.8rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">Email</div>
+      <a href="mailto:novotaxi@gmail.com" style="color:var(--yellow); font-size:1.1rem; font-weight:700; text-decoration:none; letter-spacing:1px;">novotaxi@gmail.com</a>
+    </div>
+    <button class="btn-primary" style="width:100%; font-size:1rem;" onclick="handleOrder()">✉️ Написати (потрібна реєстрація)</button>
+    <p style="color:#555; font-size:0.78rem; margin-top:12px;">Кнопка доступна після входу в додаток через Google або Apple</p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Novo<span>Taxi</span></div>
+  <p>© 2024 NovoTaxi · Звягель</p>
+  <p style="color: #444; font-size: 0.8rem;">Зроблено з ❤️ для міста</p>
+</footer>
+
+
+<!-- MODAL: СТАТИ ВОДІЄМ -->
+<div class="modal-overlay" id="modal-driver">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('modal-driver')">✕</button>
+    <div style="text-align:center; margin-bottom:20px;">
+      <div style="font-size:2.5rem; margin-bottom:8px;">🚗</div>
+      <div class="modal-title" style="color:var(--white); font-size:1.6rem;">Вхід або реєстрація</div>
+      <div style="color:#aaa; font-size:0.85rem; margin-top:4px;">Перші 7 днів безкоштовно.<br>Далі 300 грн/міс — оплата в додатку.</div>
+    </div>
+
+    <!-- Мобільний: кнопки магазинів -->
+    <div id="mobile-btns">
+      <a href="https://play.google.com/store" target="_blank" style="display:flex;align-items:center;gap:14px;background:#1a1a1a;border:1px solid rgba(255,255,255,0.1);padding:16px 20px;margin-bottom:12px;text-decoration:none;color:var(--white);font-weight:600;font-size:0.95rem;transition:border-color 0.2s;" onmouseover="this.style.borderColor='#FFD600'" onmouseout="this.style.borderColor='rgba(255,255,255,0.1)'">
+        <span style="font-size:1.4rem;">🔵</span> Продовжити з Google
+      </a>
+      <a href="https://apps.apple.com" target="_blank" style="display:flex;align-items:center;gap:14px;background:#1a1a1a;border:1px solid rgba(255,255,255,0.1);padding:16px 20px;margin-bottom:12px;text-decoration:none;color:var(--white);font-weight:600;font-size:0.95rem;transition:border-color 0.2s;" onmouseover="this.style.borderColor='#FFD600'" onmouseout="this.style.borderColor='rgba(255,255,255,0.1)'">
+        <span style="font-size:1.4rem;">🍎</span> Продовжити з Apple
+      </a>
+      <div style="background:#1a1a1a;border:1px solid rgba(255,165,0,0.4);padding:14px 20px;border-radius:0;">
+        <div style="color:#FFD600;font-weight:700;font-size:0.9rem;">📍 GPS обов'язковий</div>
+        <div style="color:#aaa;font-size:0.8rem;margin-top:2px;">Для відображення на карті клієнтів та прийому замовлень</div>
+      </div>
+    </div>
+
+    <!-- ПК: QR код -->
+    <div id="desktop-qr" style="display:none; text-align:center; margin-top:8px;">
+      <p style="font-size:0.8rem;color:#aaa;margin-bottom:12px;text-transform:uppercase;letter-spacing:1px;">Відскануй QR камерою телефону</p>
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&color=FFD600&bgcolor=0a0a0a&data=https://garybuzz9999.github.io/novotaxi/novotaxi.html" alt="QR" style="width:160px;height:160px;border:1px solid rgba(255,214,0,0.25);padding:8px;background:#0a0a0a;">
+      <div style="color:#666;font-size:0.75rem;margin-top:10px;">garybuzz9999.github.io/novotaxi</div>
+    </div>
+
+    <div style="color:#555;font-size:0.72rem;text-align:center;margin-top:16px;">
+      Перші 7 днів безкоштовно — без карти.<br>Далі 300 грн/міс — оплата в додатку.
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: ЗАМОВИТИ ТАКСІ -->
+<div class="modal-overlay" id="modal-order">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('modal-order')">✕</button>
+    <div style="text-align:center; margin-bottom:20px;">
+      <div style="font-size:2.5rem; margin-bottom:8px;">🙋</div>
+      <div class="modal-title" style="color:var(--white); font-size:1.6rem;">Вхід або реєстрація</div>
+      <div style="color:#aaa; font-size:0.85rem; margin-top:4px;">Один тап — і ви в системі</div>
+    </div>
+
+    <div id="order-mobile-btns">
+      <a href="https://play.google.com/store" target="_blank" style="display:flex;align-items:center;gap:14px;background:#1a1a1a;border:1px solid rgba(255,255,255,0.1);padding:16px 20px;margin-bottom:12px;text-decoration:none;color:var(--white);font-weight:600;font-size:0.95rem;" onmouseover="this.style.borderColor='#FFD600'" onmouseout="this.style.borderColor='rgba(255,255,255,0.1)'">
+        <span style="font-size:1.4rem;">🔵</span> Продовжити з Google
+      </a>
+      <a href="https://apps.apple.com" target="_blank" style="display:flex;align-items:center;gap:14px;background:#1a1a1a;border:1px solid rgba(255,255,255,0.1);padding:16px 20px;margin-bottom:12px;text-decoration:none;color:var(--white);font-weight:600;font-size:0.95rem;" onmouseover="this.style.borderColor='#FFD600'" onmouseout="this.style.borderColor='rgba(255,255,255,0.1)'">
+        <span style="font-size:1.4rem;">🍎</span> Продовжити з Apple
+      </a>
+      <div style="background:#1a1a1a;border:1px solid rgba(255,165,0,0.4);padding:14px 20px;">
+        <div style="color:#FFD600;font-weight:700;font-size:0.9rem;">📍 GPS обов'язковий</div>
+        <div style="color:#aaa;font-size:0.8rem;margin-top:2px;">Без геолокації додаток не працює — не зможемо знайти найближчого водія</div>
+      </div>
+    </div>
+
+    <div id="order-desktop-qr" style="display:none; text-align:center; margin-top:8px;">
+      <p style="font-size:0.8rem;color:#aaa;margin-bottom:12px;text-transform:uppercase;letter-spacing:1px;">Відскануй QR камерою телефону</p>
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&color=FFD600&bgcolor=0a0a0a&data=https://garybuzz9999.github.io/novotaxi/novotaxi.html" alt="QR" style="width:160px;height:160px;border:1px solid rgba(255,214,0,0.25);padding:8px;background:#0a0a0a;">
+      <div style="color:#666;font-size:0.75rem;margin-top:10px;">garybuzz9999.github.io/novotaxi</div>
+    </div>
+  </div>
+</div>
+
+<script>
+function isMobile() {
+  return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+}
+function handleDriver() {
+  if (isMobile()) {
+    if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+      window.location.href = 'https://apps.apple.com';
+    } else {
+      window.location.href = 'https://play.google.com/store';
+    }
+  } else {
+    openModal('modal-driver');
+  }
+}
+function handleOrder() {
+  if (isMobile()) {
+    if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+      window.location.href = 'https://apps.apple.com';
+    } else {
+      window.location.href = 'https://play.google.com/store';
+    }
+  } else {
+    openModal('modal-order');
+  }
+}
+function openModal(id) {
+  document.getElementById(id).classList.add('active');
+  document.body.style.overflow = 'hidden';
+  if (id === 'modal-driver') {
+    if (isMobile()) {
+      document.getElementById('mobile-btns').style.display = 'block';
+      document.getElementById('desktop-qr').style.display = 'none';
+    } else {
+      document.getElementById('mobile-btns').style.display = 'none';
+      document.getElementById('desktop-qr').style.display = 'block';
+    }
+  }
+  if (id === 'modal-order') {
+    if (isMobile()) {
+      document.getElementById('order-mobile-btns').style.display = 'block';
+      document.getElementById('order-desktop-qr').style.display = 'none';
+    } else {
+      document.getElementById('order-mobile-btns').style.display = 'none';
+      document.getElementById('order-desktop-qr').style.display = 'block';
+    }
+  }
+}
+function closeModal(id) {
+  document.getElementById(id).classList.remove('active');
+  document.body.style.overflow = '';
+}
+document.querySelectorAll('.modal-overlay').forEach(m => {
+  m.addEventListener('click', function(e) {
+    if (e.target === this) closeModal(this.id);
+  });
+});
+</script>
+
+<!-- ADMIN -->
+<div style="background:#0a0a0a; border-top:1px solid rgba(255,255,255,0.04); padding:16px 40px; text-align:center;">
+  <div id="admin-login" style="display:inline-flex; align-items:center; gap:8px;">
+    <input id="admin-pwd" type="password" placeholder="пароль" style="background:#111; border:1px solid rgba(255,255,255,0.06); color:#555; padding:7px 14px; font-family:Manrope; font-size:0.78rem; outline:none; width:120px;">
+    <button onclick="adminLogin()" style="background:none; border:1px solid rgba(255,255,255,0.06); color:#333; padding:7px 16px; font-family:Manrope; font-size:0.75rem; letter-spacing:2px; text-transform:uppercase; cursor:pointer;">АДМІН</button>
+  </div>
+</div>
+
+<div id="admin-panel" style="display:none; background:#111; border-top:2px solid rgba(255,214,0,0.2); padding:24px 40px;">
+  <div style="max-width:600px; margin:0 auto;">
+    <div style="font-family:'Bebas Neue',sans-serif; font-size:1.2rem; color:rgba(255,214,0,0.5); letter-spacing:3px; margin-bottom:16px;">АДМІН · NOVOTAXI</div>
+    <div style="display:flex; flex-direction:column; gap:12px;">
+      <div style="display:flex; align-items:center; gap:12px;">
+        <label style="font-size:0.78rem; color:#555; text-transform:uppercase; letter-spacing:1px; width:200px; flex-shrink:0;">Ціна для водія (грн/міс)</label>
+        <input id="a-price" type="number" value="500" style="background:#1a1a1a; border:1px solid rgba(255,255,255,0.08); color:white; padding:10px 14px; font-family:Manrope; font-size:0.9rem; outline:none; flex:1;">
+      </div>
+      <div style="display:flex; align-items:center; gap:12px;">
+        <label style="font-size:0.78rem; color:#555; text-transform:uppercase; letter-spacing:1px; width:200px; flex-shrink:0;">Текст промо-лейблу</label>
+        <input id="a-promo-title" type="text" value="Безкоштовний тариф для водіїв" style="background:#1a1a1a; border:1px solid rgba(255,255,255,0.08); color:white; padding:10px 14px; font-family:Manrope; font-size:0.9rem; outline:none; flex:1;">
+      </div>
+      <div style="display:flex; align-items:center; gap:12px;">
+        <label style="font-size:0.78rem; color:#555; text-transform:uppercase; letter-spacing:1px; width:200px; flex-shrink:0;">Підзаголовок промо</label>
+        <input id="a-promo-sub" type="text" value="до 31 серпня 2026 року" style="background:#1a1a1a; border:1px solid rgba(255,255,255,0.08); color:white; padding:10px 14px; font-family:Manrope; font-size:0.9rem; outline:none; flex:1;">
+      </div>
+      <div style="text-align:right; margin-top:4px;">
+        <button onclick="adminApply()" style="background:var(--yellow);color:#000;border:none;padding:10px 28px;font-family:Manrope;font-weight:700;font-size:0.85rem;letter-spacing:1px;text-transform:uppercase;cursor:pointer;">Застосувати</button>
+        <span id="a-msg" style="display:none; color:var(--yellow); font-size:0.82rem; margin-left:16px;">✓ Оновлено</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function adminLogin() {
+  const pwd = document.getElementById('admin-pwd').value;
+  if (pwd === 'novotaxi2026') {
+    document.getElementById('admin-panel').style.display = 'block';
+    document.getElementById('admin-login').style.display = 'none';
+  } else {
+    document.getElementById('admin-pwd').style.borderColor = 'red';
+    setTimeout(() => document.getElementById('admin-pwd').style.borderColor = 'rgba(255,255,255,0.06)', 1000);
+  }
+}
+document.getElementById('admin-pwd').addEventListener('keydown', e => { if (e.key === 'Enter') adminLogin(); });
+
+function adminApply() {
+  const price = document.getElementById('a-price').value;
+  const title = document.getElementById('a-promo-title').value;
+  const sub = document.getElementById('a-promo-sub').value;
+  if (price) document.getElementById('driver-price').textContent = price;
+  if (title) document.getElementById('promo-title').textContent = title;
+  if (sub) document.getElementById('promo-sub').textContent = sub;
+  const msg = document.getElementById('a-msg');
+  msg.style.display = 'inline';
+  setTimeout(() => msg.style.display = 'none', 2000);
+}
+</script>
+</body>
+</html>
