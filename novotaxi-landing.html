@@ -1249,15 +1249,69 @@ document.querySelectorAll('.modal-overlay').forEach(m => {
         <input id="a-promo-sub" type="text" value="до 31 серпня 2026 року" style="background:#1a1a1a; border:1px solid rgba(255,255,255,0.08); color:white; padding:10px 14px; font-family:Manrope; font-size:0.9rem; outline:none; flex:1;">
       </div>
       <div style="text-align:right; margin-top:4px;">
-        <button onclick="adminApply()" style="background:var(--yellow);color:#000;border:none;padding:10px 28px;font-family:Manrope;font-weight:700;font-size:0.85rem;letter-spacing:1px;text-transform:uppercase;cursor:pointer;">Застосувати</button>
-        <span id="a-msg" style="display:none; color:var(--yellow); font-size:0.82rem; margin-left:16px;">✓ Оновлено</span>
+        <button onclick="adminApply()" style="background:var(--yellow);color:#000;border:none;padding:10px 28px;font-family:Manrope;font-weight:700;font-size:0.85rem;letter-spacing:1px;text-transform:uppercase;cursor:pointer;">Зберегти</button>
+        <span id="a-msg" style="display:none; color:var(--yellow); font-size:0.82rem; margin-left:16px;">✓ Збережено в Firebase</span>
       </div>
     </div>
   </div>
 </div>
 
-<script>
-function adminLogin() {
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDixXJ-eggW5gE_VaubAM827lUWG7-v4rU",
+  authDomain: "novotaxi-fcb7f.firebaseapp.com",
+  databaseURL: "https://novotaxi-fcb7f-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "novotaxi-fcb7f",
+  storageBucket: "novotaxi-fcb7f.firebasestorage.app",
+  messagingSenderId: "6765698996",
+  appId: "1:6765698996:web:023685ec3c60250cf7dce1"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+// Load saved values on page open
+onValue(ref(db, 'landing'), (snap) => {
+  const d = snap.val();
+  if (!d) return;
+  if (d.price) {
+    document.getElementById('driver-price').textContent = d.price;
+    document.getElementById('a-price').value = d.price;
+  }
+  if (d.promo_title) {
+    document.getElementById('promo-title').textContent = d.promo_title;
+    document.getElementById('a-promo-title').value = d.promo_title;
+  }
+  if (d.promo_sub) {
+    document.getElementById('promo-sub').textContent = d.promo_sub;
+    document.getElementById('a-promo-sub').value = d.promo_sub;
+  }
+});
+
+window.adminApply = async () => {
+  const price = document.getElementById('a-price').value;
+  const title = document.getElementById('a-promo-title').value;
+  const sub = document.getElementById('a-promo-sub').value;
+
+  await set(ref(db, 'landing'), {
+    price: price,
+    promo_title: title,
+    promo_sub: sub
+  });
+
+  document.getElementById('driver-price').textContent = price;
+  document.getElementById('promo-title').textContent = title;
+  document.getElementById('promo-sub').textContent = sub;
+
+  const msg = document.getElementById('a-msg');
+  msg.style.display = 'inline';
+  setTimeout(() => msg.style.display = 'none', 2000);
+};
+
+window.adminLogin = () => {
   const pwd = document.getElementById('admin-pwd').value;
   if (pwd === 'novotaxi2026') {
     document.getElementById('admin-panel').style.display = 'block';
@@ -1266,20 +1320,11 @@ function adminLogin() {
     document.getElementById('admin-pwd').style.borderColor = 'red';
     setTimeout(() => document.getElementById('admin-pwd').style.borderColor = 'rgba(255,255,255,0.06)', 1000);
   }
-}
-document.getElementById('admin-pwd').addEventListener('keydown', e => { if (e.key === 'Enter') adminLogin(); });
+};
 
-function adminApply() {
-  const price = document.getElementById('a-price').value;
-  const title = document.getElementById('a-promo-title').value;
-  const sub = document.getElementById('a-promo-sub').value;
-  if (price) document.getElementById('driver-price').textContent = price;
-  if (title) document.getElementById('promo-title').textContent = title;
-  if (sub) document.getElementById('promo-sub').textContent = sub;
-  const msg = document.getElementById('a-msg');
-  msg.style.display = 'inline';
-  setTimeout(() => msg.style.display = 'none', 2000);
-}
+document.getElementById('admin-pwd').addEventListener('keydown', e => {
+  if (e.key === 'Enter') window.adminLogin();
+});
 </script>
 </body>
 </html>
