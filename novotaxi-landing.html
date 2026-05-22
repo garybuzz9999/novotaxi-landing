@@ -213,11 +213,18 @@
 
   .hero h1 {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(4rem, 9vw, 8rem);
+    font-size: clamp(3rem, 9vw, 8rem);
     line-height: 0.9;
     letter-spacing: 2px;
     margin-top: 0;
     margin-bottom: 12px;
+  }
+
+  @media (max-width: 480px) {
+    .hero h1 {
+      font-size: clamp(2rem, 10vw, 3rem);
+    }
+    .hero-badges { display: none !important; }
   }
 
   .hero h1 .accent { color: var(--yellow); }
@@ -779,9 +786,9 @@
   @media (max-width: 768px) {
     header { padding: 16px 20px; }
     nav { display: none; }
-    .hero { padding: 100px 20px 60px; }
+    .hero { padding: 200px 20px 20px; }
     .hero-stats { gap: 28px; flex-wrap: wrap; }
-    .section { padding: 70px 20px; }
+    .section { padding: 30px 20px; }
     .drivers-inner { grid-template-columns: 1fr; gap: 40px; }
     .contact-section { grid-template-columns: 1fr; gap: 40px; padding: 70px 20px; }
     .clients-section { padding: 70px 20px; }
@@ -925,11 +932,11 @@
   <div class="hero-content">
     <div style="position:relative; width:100%;">
       <div style="flex:1;">
-        <div style="display:flex; gap:12px; flex-wrap:nowrap; align-items:center; margin-bottom:24px;">
+        <div style="display:flex; gap:12px; flex-wrap:nowrap; align-items:center; margin-bottom:24px;" class="hero-badges">
           <div class="hero-tag" style="margin-bottom:0;">🚖 Звягель</div>
           <div class="hero-tag" style="margin-bottom:0; background:rgba(57,255,20,0.12); border-color:#39ff14; color:#39ff14;">📞 Безкоштовний виклик для пасажирів</div>
         </div>
-        <h1>ШВИДКЕ<br><span class="accent">ТАКСІ</span><br>У МІСТІ</h1>
+        <h1>ШВИДКЕ <span class="accent">ТАКСІ</span><br>У МІСТІ</h1>
         <p>Місцевий таксі-агрегатор. Перевірені водії, чесні ціни, швидка подача — без зайвих відсотків і посередників.</p>
       <div style="margin-top:8px; background:rgba(255,214,0,0.08); border:1px solid var(--yellow); padding:14px 18px; display:inline-block;">
         <span style="font-size:1.56rem; margin-right:8px;">🎁</span>
